@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-1-17 10:26:23 by Hibernate Tools 5.2.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="itcastoa" dynamic-insert="false" dynamic-update="false" mutable="true" name="hibernate.Department" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="department">
+        <id name="did" type="long">
+            <column name="did"/>
+            <generator class="assigned"/>
+        </id>
+        <property generated="never" lazy="false" name="dname" optimistic-lock="true" type="string" unique="false">
+            <column length="20" name="dname"/>
+        </property>
+        <property generated="never" lazy="false" name="description" optimistic-lock="true" type="string" unique="false">
+            <column length="100" name="description"/>
+        </property>
+        <set embed-xml="true" fetch="select" inverse="true" lazy="true" mutable="true" name="users" optimistic-lock="true" sort="unsorted" table="user">
+            <key on-delete="noaction">
+                <column name="did"/>
+            </key>
+            <one-to-many class="hibernate.User" embed-xml="true" not-found="exception"/>
+        </set>
+    </class>
+</hibernate-mapping>
