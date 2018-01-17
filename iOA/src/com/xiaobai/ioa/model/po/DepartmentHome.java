@@ -6,11 +6,19 @@ import javax.naming.InitialContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.criterion.Example;
+
+import com.xiaobai.ioa.util.HibernateSessionUtil;
 
 /**
  * Home object for domain model class Department.
+ * 
  * @see hibernate.Department
  * @author Hibernate Tools
  */
@@ -19,14 +27,36 @@ public class DepartmentHome
 
 	private static final Log log = LogFactory.getLog(DepartmentHome.class);
 
-	private final SessionFactory sessionFactory = getSessionFactory();
-	//private final String SessionFactory = "/iOA/config/hibernate/hibernate.cfg.xml";
+	//private final SessionFactory sessionFactory = getSessionFactory();
+	private SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
 	
+
+//	protected SessionFactory getSessionFactory2()
+//	{
+//		// A SessionFactory is set up once for an application!
+//		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().
+//				configure("/hibernate/hibernate.cfg.xml") // configures settings from hibernate.cfg.xml
+//				.build();
+//		SessionFactory factory = null;
+//		try {
+//			
+//			 
+//			  factory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+//		}
+//		catch (Exception e) {
+//			// The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
+//			// so destroy it manually.
+//			StandardServiceRegistryBuilder.destroy( registry );
+//		}
+//		
+//		return factory;
+//	}
+
 	protected SessionFactory getSessionFactory()
 	{
 		try
 		{
-			return (SessionFactory) new InitialContext().lookup("/iOA/config/hibernate/hibernate.cfg.xml");
+			return (SessionFactory) new InitialContext().lookup("SessionFactory");
 		} catch (Exception e)
 		{
 			log.error("Could not locate SessionFactory in JNDI", e);
@@ -110,7 +140,13 @@ public class DepartmentHome
 		log.debug("getting Department instance with id: " + id);
 		try
 		{
-			Department instance = (Department) sessionFactory.getCurrentSession().get("hibernate.Department", id);
+			 Session session = sessionFactory.getCurrentSession();
+			Transaction transaction = session.beginTransaction();
+			Department instance = (Department) session.get("com.xiaobai.ioa.model.po.Department", id);			
+			transaction.commit();
+			
+			//Department instance = (Department) sessionFactory.getCurrentSession()
+			//		.get("com.xiaobai.ioa.model.po.Department", id);
 			if (instance == null)
 			{
 				log.debug("get successful, no instance found");

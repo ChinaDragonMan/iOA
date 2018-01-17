@@ -8,14 +8,27 @@
   <property name="hibernate.connection.url">jdbc:mysql://localhost/itcastoa?useUnicode=true&amp;characterEncoding=UTF-8</property>
   <property name="hibernate.connection.username">root</property>
   <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+  
   <property name="show_sql">true</property>
+  <!-- 
+没有下面的thread配置会出现：No CurrentSessionContext configured! 异常
+		  没有currentSession配置错误，即在我们使用currentSession的时候要在hibernate.cfg.xml中进行相关的事务配置：
+		1、本地事务
+		<property name="hibernate.current_session_context_class">thread</property>
+		2、全局事务
+		<property name="hibernate.current_session_context_class">jta</property>
+		这样就解决了！
+		如果在获得session 对象时使用的是 session = sessionFactory.getCurrentSession（）；
+		则此处可以改成 session = sessionFactory.openSession（）；
+		这样就不用修改上面的配置文件了
+   -->
+  <property name="hibernate.current_session_context_class">thread</property>
+  <property name="hibernate.format_sql">true</property>
+  
   
   <mapping resource="com/xiaobai/ioa/model/po/Department.hbm.xml"/>
   <mapping resource="com/xiaobai/ioa/model/po/Post.hbm.xml"/>
   <mapping resource="com/xiaobai/ioa/model/po/User.hbm.xml"/>
-  
-  
-  
-  
+
  </session-factory>
 </hibernate-configuration>
